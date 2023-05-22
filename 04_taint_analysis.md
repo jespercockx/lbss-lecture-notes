@@ -543,13 +543,13 @@ a way that is not detected by the above analysis.
 **Answer**: Here is a function that converts a tainted boolean value to
 an identical value that is not marked as tainted:
 
-  def launderBool(myBool) {
-    if (myBool) {
-      return true;
-    else {
-      return false;
-    };
-  }
+    fun launderBool(myBool) {
+      if (myBool) {
+        return true;
+      } else {
+        return false;
+      };
+    }
 
 
 

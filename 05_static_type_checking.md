@@ -140,8 +140,7 @@ extended with arrays from previous chapter. We also extend the language with
     Literal    ::= Number | 'true' | 'false'
     Identifier ::= String
 
-For this language, we require types for Booleans, numbers, arrays, and
-functions:
+For this language, we require types for Booleans, numbers, and arrays:
 
     Type ::= 'Bool' | 'Int' | Type '[]'
 
@@ -273,6 +272,9 @@ define the type rule for variable references `x`:
 
 Here, $\cget \Gamma x$ is a (meta-level) partial function that looks
 up the type assigned to $x$ by $\Gamma$, if there is an entry for $x$.
+This rule says that a variable reference is only well-typed if the required variable
+is bound, and the type of the variable reference is the type of the
+variable in the current context.
 
 We can now also give a typing rule for `arlen`:
 
@@ -281,10 +283,7 @@ We can now also give a typing rule for `arlen`:
 \end{mathpar}
 
 That is, if $\Gamma$ binds $x$ to have an array type $T[]$ for some
-$T$, then $\arlen x$ has type $\Int$ in $\Gamma$. The second rule says
-that a variable reference is only well-typed if the required variable
-is bound, and the type of the variable reference is the type of the
-variable in the current context.
+$T$, then $\arlen x$ has type $\Int$ in $\Gamma$.
 
 This concludes the type rules for expressions and we can now construct
 derivation trees for all well-typed expressions. For example, in a
@@ -433,9 +432,9 @@ adopt the annotated type as the element type of the array:
 \begin{mathpar}
 \inferrule{
   \Gamma \vdash e : \Int \\
-  \cupdate \Gamma x {T[]} \cout \Gamma'
+  \cupdate \Gamma x {T[]} = \Gamma'
 }{
-  \Gamma \vdash x \ass \arnewt T e
+  \Gamma \vdash x \ass \arnewt T e \cout \Gamma'
 } 
 \end{mathpar}
 
@@ -484,7 +483,9 @@ annotation. Thus, we change the syntax for function declarations as
 follows:
 
     Fun     ::= 'fun' Type FunName '(' FunArgs ')' '{' Stmts '}'
-    FunArgs ::= '' | Type Identifier ',' FunArgs
+    FunArgs    ::= '' | FunArgs1
+    FunArgs1   ::= FunArg | FunArg ',' FunArgs1
+    FunArg     ::= Type Identifier
 
 This makes it easy to fill $\Sigma$ initially by collecting the
 signatures of all declared functions. We then extend the typing
