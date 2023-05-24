@@ -87,9 +87,8 @@ Apart from the abstract values `even` and `odd` and the booleans
 `true` and `false` (which we do not abstract), we have the special
 symbol ⊤ (pronounced 'top') that represents values we do not know
 anything about (i.e. it could be any number or boolean). There is also
-the symbol ⊥ (pronounced 'bottom') that represents an 'undefined
-value' or an 'error state', which we will ignore for now (it will
-become important later).
+the symbol ⊥ (pronounced 'bottom') that represents an error or an
+unreachable state, which will become important later.
 
 We start by definining the abstract interpretation of literals. As you
 might expect, the abstract interpretation of a literal number $l$ is
@@ -115,13 +114,15 @@ result is always an odd number. This way we derive the addition on
 abstract values:
 
 \begin{equation*}
-\begin{array}{lclcl}
+\begin{array}{lclcll}
   \even & \abs{+} & \even &=& \even \\
   \even & \abs{+} & \odd &=& \odd \\
   \odd & \abs{+} & \even &=& \odd \\
   \odd & \abs{+} & \odd &=& \even \\
-  \top & \abs{+} & p_2 &=& \top \\
-  p_1 & \abs{+} & \top &=& \top \\
+  \bot & \abs{+} & p_2 &=& \bot \\
+  p_1 & \abs{+} & \bot &=& \bot \\
+  \top & \abs{+} & p_2 &=& \top & \text{if $p_2 \neq \bot$} \\
+  p_1 & \abs{+} & \top &=& \top & \text{if $p_1 \neq \bot$} \\
 \end{array}
 \end{equation*}
 
@@ -139,13 +140,15 @@ value. Using this symbol, we can define the abstract semantics of
 `==`:
 
 \begin{equation*}
-\begin{array}{lclcl}
+\begin{array}{lclcll}
   \even & \abs{\tt{==}} & \even &=& \top \\
   \even & \abs{\tt{==}} & \odd &=& \false \\
   \odd & \abs{\tt{==}}  & \even &=& \false \\
   \odd & \abs{\tt{==}}  & \odd &=& \top \\
-  \top & \abs{\tt{==}}  & p &=& \top \\
-  p & \abs{\tt{==}}     & \top &=& \top \\
+  \bot & \abs{\tt{==}}  & p &=& \bot \\
+  p & \abs{\tt{==}}  & \bot &=& \bot \\
+  \top & \abs{\tt{==}}  & p &=& \top & \text{if $p \neq \bot$}  \\
+  p & \abs{\tt{==}}     & \top &=& \top & \text{if $p \neq \bot$}  \\
 \end{array}
 \end{equation*}
 
@@ -230,13 +233,15 @@ make use of the operation `⊔` called the *join* or the *least upper
 bound*. It is defined on parities as follows:
 
 \begin{equation*}
-\begin{array}{lclcl}
+\begin{array}{lclcll}
     \even &⊔& \even &=& \even \\
     \even &⊔& \odd  &=& ⊤ \\
     \odd  &⊔& \even &=& ⊤ \\
     \odd  &⊔& \odd  &=& \odd \\
-    ⊤     &⊔& p     &=& ⊤ \\
-    p     &⊔& ⊤     &=& ⊤ \\
+    \bot  &⊔& p     &=& \bot \\
+    p     &⊔& \bot  &=& \bot \\
+    ⊤     &⊔& p     &=& ⊤  & \text{if $p \neq \bot$}\\
+    p     &⊔& ⊤     &=& ⊤  & \text{if $p \neq \bot$}\\
 \end{array}
 \end{equation*}
 
@@ -244,11 +249,9 @@ We define the least upper bound of two heaps $h_1$ and $h_2$ as
 follows:
 
 \begin{equation*}
-\begin{array}{lcl@{\hspace{2cm}}l}
-\hget {h_1 \sqcup h_2} x &=& p_1 \sqcup p_2 & \text{if } \hget {h_1} x = p_1 \text{ and } \hget {h_2} x = p_2 \\
-\hget {h_1 \sqcup h_2} x &=& ⊥ & \text{otherwise}
-\end{array}
+\hget {h_1 \sqcup h_2} x = \hget {h_1} x \sqcup \hget {h_2} x
 \end{equation*}
+where we let $\hget{h} x = \bot$ if the variable $x$ is not defined in $h$.
 
 With these observations, we derive the abstract semantics of `if`
 statements in general:
