@@ -16,9 +16,9 @@ remember from the homework assignments of chapter 2, *memory safety* means the
 prevention of three issues:
 
  - **use after free**: dynamically allocated memory is read from or written to after the memory was freed
- 
+
  - **double free**: dynamically allocated memory is freed twice
- 
+
  - **memory leak**: dynamically allocated memory is never freed
 
 As it turns out, it is possible to design a static type system that
@@ -31,7 +31,7 @@ issues can arise:
  - **write-write conflict**: Two concurrent threads write to the same
      memory location. Depending on the scheduling of the threads, one
      result will be overwritten by the other.
- 
+
  - **read-write conflict**: Two concurrent threads access the same
      memory location, one reading and one writing. The reading thread
      may see either the data before or after writing, depending on
@@ -155,7 +155,7 @@ error[E0382]: use of moved value: `s`
  --> src/main.rs:4:14
   |
 2 |     let s = String::from("Delft");
-  |         - move occurs because `s` has type `String`, which does not 
+  |         - move occurs because `s` has type `String`, which does not
   |           implement the `Copy` trait
 3 |     let s2 = s;
   |              - value moved here
@@ -164,7 +164,7 @@ error[E0382]: use of moved value: `s`
 ```
 
 Values are not only moved during variable assignment, but also when
-calling a function: 
+calling a function:
 
 ```rust
 fn main() {
@@ -185,7 +185,7 @@ error[E0382]: use of moved value: `s1`
  --> src/main.rs:4:14
   |
 2 |     let s1 = String::from("Delft");
-  |         -- move occurs because `s1` has type `String`, which does not 
+  |         -- move occurs because `s1` has type `String`, which does not
   |            implement the `Copy` trait
 3 |     let len = calculate_length(s1);
   |                                -- value moved here
@@ -199,7 +199,7 @@ function returns.
 ```rust
     fn main() {
         let s1 = String::from("Delft");
-        let (len, s2) = calculate_length(s1); 
+        let (len, s2) = calculate_length(s1);
         do_print(s2, len)
     }
     fn calculate_length(s: String) -> (usize, String) {
@@ -219,7 +219,7 @@ variable temporarily.
 ```rust
     fn main() {
         let s = String::from("Delft");
-        let len = length(&s); 
+        let len = length(&s);
         do_print(s,len);
     }
     fn length(s: &String) -> usize {
@@ -241,7 +241,7 @@ applications, where want to prevent data races.
 ```rust
     fn main() {
         let s = String::from("Hello");
-        let len = length(&s); 
+        let len = length(&s);
         println!("The length of '{}' is {}.", s, len);
     }
     fn length(s: &String) -> usize {
@@ -258,10 +258,10 @@ error[E0596]: cannot borrow `*s` as mutable, as it is behind a `&` reference
  --> src/main.rs:7:5
   |
 6 | fn length(s: &String) -> usize {
-  |              ------- help: consider changing this to be a mutable 
+  |              ------- help: consider changing this to be a mutable
   |                      reference: `&mut String`
 7 |     s.push_str(", Delft!");
-  |     ^ `s` is a `&` reference, so the data it refers to cannot be 
+  |     ^ `s` is a `&` reference, so the data it refers to cannot be
   |       borrowed as mutable
 ```
 
@@ -333,7 +333,7 @@ error[E0106]: missing lifetime specifier
 5 | fn dangle() -> & String {
   |                ^ expected named lifetime parameter
   |
-  = help: this function's return type contains a borrowed value, but 
+  = help: this function's return type contains a borrowed value, but
   | there is no value for it to be borrowed from
 ```
 
@@ -351,10 +351,10 @@ races. In Rust, exactly one of the following is true for any variable:
 
  - There is no reference to it, which means the data has a single
    owner that has solitary access.
- 
+
  - There are any number of immutable references to it, which means all
    of them can simultaneously read the data but none can modify it.
- 
+
  - There is a single mutable reference to it, which is the sole way to
    modify or read the data.
 
@@ -440,7 +440,7 @@ in a linearly typed language:
 ```
 fun open (f : FileName) -> FileHandle
 fun read (h : FileHandle) -> (String, FileHandle)
-fun append (s : String, h : FileHandle) -> FileHandle 
+fun append (s : String, h : FileHandle) -> FileHandle
 fun write (s : String, h : FileHandle) -> FileHandle
 fun close (h : FileHandle) -> Void
 ```
@@ -655,7 +655,7 @@ $$ \begin{array}{lll@{\qquad}l}
 **Exercise**: Give a possible substructural typing rule for
   `while`-loops. Think about in which order different parts of the
   loop are executed. In particular, investigate when the condition is
-  evaluated. 
+  evaluated.
 
 **Answer**: We have to ensure that the output context $\Gamma_3$ does still
 contain all the variables that are used in both the condition and the body of
@@ -742,7 +742,7 @@ fun Int g(x : Int) {
   if (false) {
     return x;
   } else {
-    
+
   }
 }
 ```
@@ -900,9 +900,9 @@ The typing rule for `arswap` is a combination of the rules for `arread` and
   \cget {\Gamma_0} a = T[] \\
   \Gamma_0 \vdash e_1 : \Int \cout \Gamma_1 \\
   \Gamma_1 \vdash e_2 : T \cout \Gamma_2 \\
-  \cupdate {\Gamma_2} y T
+  \cupdate {\Gamma_2} y T = \Gamma_3
 }{
-  \Gamma_0 \vdash y \ass \arswap x {e_1} {e_2} \cout \Gamma_3
+  \Gamma_0 \vdash y \ass \arswap a {e_1} {e_2} \cout \Gamma_3
 } \end{mathpar}
 
 That is, `arswap` is an atomic operation that can be compiled as

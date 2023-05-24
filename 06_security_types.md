@@ -274,7 +274,7 @@ each defined function. We also again require a return type to keep track of the
 type of `return` statements.
 
 The typing judgement for statements now becomes $\Sigma, \Gamma, P, R \vdash
-\it{ss} \cout \Gamma'$, where $T$ is the label of the program counter and $R$
+\it{ss} \cout \Gamma'$, where $P$ is the label of the program counter and $R$
 is the type that return statements must adhere to.
 
 When we return from a function, we have to make sure that the current security
